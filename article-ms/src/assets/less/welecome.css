@@ -1,0 +1,128 @@
+#count_tab {
+  height: 120px;
+  margin-bottom: 20px;
+}
+#count_tab > .el-col {
+  height: 120px;
+  border-radius: 4px;
+}
+#count_tab .bg-purple {
+  background: #ffffff;
+}
+#count_tab .out-content {
+  border-radius: 4px;
+  min-height: 120px;
+  color: #ffffff;
+}
+#count_tab .out-content > .el-row {
+  height: 120px;
+}
+#count_tab .bg-purple-pink {
+  background: #ffa3a1;
+}
+#count_tab .bg-purple-blue {
+  background: #84d9d2;
+}
+#count_tab .bg-purple-green {
+  background: #87de75;
+}
+#count_tab .bg-purple-blu {
+  background: #a5e7f0;
+}
+#count_tab .bg-purple-bl {
+  background: #93b7e3;
+}
+#count_tab .bg-purple-zi {
+  background: #edafda;
+}
+#count_tab .in-content {
+  border-radius: 4px;
+  min-height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#count_tab .in-content div {
+  width: 113px;
+  height: 80px;
+  padding: 10px;
+  text-align: center;
+}
+#count_tab .in-content div p {
+  margin: 10px;
+}
+#count_tab .in-content div .count {
+  font-size: 22px;
+  font-weight: bold;
+}
+#count_tab .in-content i {
+  width: 62px;
+  height: 80px;
+  font-size: 30px;
+  line-height: 80px;
+  margin: 0 auto;
+}
+#echarts_tab {
+  height: 400px;
+  margin-bottom: 20px;
+}
+#echarts_tab > .el-col {
+  height: 400px;
+  border-radius: 4px;
+}
+#echarts_tab .bg-purple {
+  background: #ffffff;
+}
+#echarts_tab .out-content {
+  border-radius: 4px;
+  min-height: 400px;
+  color: #ffffff;
+}
+#echarts_tab .out-content > .el-row {
+  height: 400px;
+}
+#echarts_tab .bg-purple-pink {
+  background: #ffa3a1;
+}
+#echarts_tab .bg-purple-blue {
+  background: #84d9d2;
+}
+#echarts_tab .bg-purple-green {
+  background: #87de75;
+}
+#echarts_tab .bg-purple-blu {
+  background: #a5e7f0;
+}
+#echarts_tab .bg-purple-bl {
+  background: #93b7e3;
+}
+#echarts_tab .bg-purple-zi {
+  background: #edafda;
+}
+#echarts_tab .in-content {
+  min-height: 350px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 4px;
+}
+#echarts_tab .in-content #pie_wenli {
+  width: 100%;
+  height: 350px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+#echarts_tab .in-content #pie_wenli div {
+  width: 330px;
+  height: 100%;
+}
+#echarts_tab .in-content #database {
+  width: 100%;
+  height: 350px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+#echarts_tab .in-content #database div {
+  width: 360px !important;
+  height: 100%;
+}

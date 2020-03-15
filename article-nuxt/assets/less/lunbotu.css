@@ -1,0 +1,66 @@
+#lunbotu ul {
+  position: relative;
+  width: 75%;
+  height: 100%;
+  /*border-radius: 30px;
+        overflow: hidden;*/
+}
+#lunbotu ul li {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: white;
+  font-size: 30px;
+}
+#lunbotu ul li img {
+  width: 100%;
+  height: 100%;
+}
+#lunbotu ul li.active {
+  z-index: 10000;
+  opacity: 1;
+  transition: all 2s;
+}
+#lunbotu ul li.active2 {
+  opacity: 0;
+  transition: all 2s;
+}
+.btn {
+  opacity: 0.2;
+  position: absolute;
+  z-index: 1000000;
+  width: 30px;
+  height: 50px;
+  background: aqua;
+  border: none;
+  cursor: pointer;
+}
+#prev {
+  left: 0;
+  top: 115px;
+}
+#next {
+  right: 25%;
+  top: 115px;
+}
+#list1 {
+  background: red ;
+}
+#list2 {
+  background: black ;
+}
+#list3 {
+  background: hotpink ;
+}
+#list4 {
+  background: blue ;
+}
+#list5 {
+  background: yellow;
+}
+#list6 {
+  background: green;
+}
+#list7 {
+  background: salmon;
+}

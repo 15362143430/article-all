@@ -1,0 +1,31 @@
+{
+  "name": "article-nuxt",
+  "version": "1.0.0",
+  "description": "My cat&#39;s meow Nuxt.js project",
+  "author": "linrui",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "jquery": "^3.4.1",
+    "nuxt": "^2.0.0"
+  },
+  "devDependencies": {
+    "less": "^3.11.1",
+    "less-loader": "^5.0.0",
+    "nodemon": "^1.18.9"
+  },
+  "config": {
+    "nuxt":{
+      "host":"localhost",
+      "port":"3000"
+    }
+  }
+}

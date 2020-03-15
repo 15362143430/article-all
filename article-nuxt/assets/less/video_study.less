@@ -1,0 +1,84 @@
+.container {
+  display: block !important;
+}
+
+.article-header {
+  width: 100%;
+  height: 36px;
+  border-bottom: 4px solid rgb(219, 109, 76);
+  font-size: 20px;
+  font-weight: 400;
+  cursor: pointer;
+
+  p {
+    font-family: "Microsoft Yahei", Simsun;
+    font-size: 16px;
+    font-weight: 700;
+    margin-right: 10px;
+    display: inline-block;
+  }
+}
+
+.video-list {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  height: auto;
+  overflow: hidden;
+  transition: all 0.2s;
+
+  /*animation: move 3s;*/
+  a {
+    background: white;
+    overflow: hidden;
+    margin: 20px 1.5%;
+    width: 30%;
+    height: 280px;
+
+    /*border: 1px solid black;*/
+    .video-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+      width: 100%;
+      height: 60px;
+      line-height: 60px;
+      border-bottom: 1px solid #999;
+      font-family: "微软雅黑";
+      font-size: 18px;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    img {
+      width: 100%;
+      height: 180px;
+      /*opacity: 0;*/
+      /*transition: all 1s;*/
+    }
+
+    .list-bottom {
+      display: flex;
+      justify-content: space-between;
+      box-sizing: border-box;
+
+    }
+  }
+
+  .type {
+    font-size: 16px;
+    color: #759b08;
+    margin-right: 30px;
+  }
+
+
+  .date {
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // width: 80%;
+  }
+
+}
