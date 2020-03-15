@@ -1,0 +1,151 @@
+<div id="article_content" class="article_content clearfix" style="height: auto; overflow: hidden;">
+                                                <div class="article-copyright">
+                <span class="creativecommons">
+                <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+                    </a>
+            <span><a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank"></span>
+               <div class="article-source-link2222">
+                    <a href="https://blog.csdn.net/itcats_cn/article/details/82318092"></a>
+                </div>
+            </span>
+                    </div>
+                                                    <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-3019150162.css">
+                                        <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-3019150162.css">
+                <div class="htmledit_views" id="content_views">
+                                            <h2><a name="t0"></a>什么是跨域问题?</h2>
+
+<p>跨域问题来源于JavaScript的"同源策略"，即只有 <span style="color:#ff2600;">协议+主机名+端口号 (如存在)</span>相同，则允许相互访问。也就是说JavaScript只能访问和操作自己域下的资源，不能访问和操作其他域下的资源。跨域问题是针对JS和ajax的，html本身没有跨域问题。</p>
+
+<p>查看浏览器开发者工具Console报错：</p>
+
+<p>Failed to load http://a.a.com:8080/A/FromServlet?userName=123: No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://b.b.com:8080' is therefore not allowed access.</p>
+
+<p>http://www.abc.com/a/b&nbsp;调用&nbsp;http://www.abc.com/d/c（非跨域）</p>
+
+<p>http://www.abc.com/a/b&nbsp;调用&nbsp;http://www.def.com/a/b&nbsp;（跨域：域名不一致）</p>
+
+<p>http://www.abc.com:8080/a/b&nbsp;调用&nbsp;http://www.abc.com:8081/d/c&nbsp;（跨域：端口不一致）</p>
+
+<p>http://www.abc.com/a/b&nbsp;调用&nbsp;https://www.abc.com/d/c&nbsp;（跨域：协议不同）</p>
+
+<p>请注意：localhost和127.0.0.1虽然都指向本机，但也属于跨域。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<h2><a name="t1"></a>跨域问题怎么解决？</h2>
+
+<p>1、响应头添加Header允许访问</p>
+
+<p>2、jsonp <span style="color:#ff2600;">只支持get请求不支持post请求</span></p>
+
+<p>3、httpClient内部转发</p>
+
+<p>4、使用接口网关——nginx、springcloud zuul &nbsp; (互联网公司常规解决方案)</p>
+
+<p>&nbsp;</p>
+
+<h3><a name="t2"></a>解决方式1：响应头添加Header允许访问</h3>
+
+<p id="1-跨域资源共享cors"><strong>跨域资源共享（CORS）Cross-Origin Resource Sharing</strong></p>
+
+<p><strong>这个跨域访问的解决方案的安全基础是基于"<span style="color:#ff2600;">JavaScript无法控制该HTTP头</span>"</strong></p>
+
+<p><strong>它需要通过目标域返回的HTTP头来授权是否允许跨域访问。</strong></p>
+
+<pre class="has" name="code"><code class="hljs java"><ol class="hljs-ln"><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="1"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">response.addHeader(‘Access-Control-Allow-Origin:*’);<span class="hljs-comment">//允许所有来源访问 </span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="2"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">response.addHeader(‘Access-Control-Allow-Method:POST,GET’);<span class="hljs-comment">//允许访问的方式</span></div></div></li></ol></code><div class="hljs-button {2}" data-title="复制" onclick="hljs.copyCode(event)"></div></pre>
+
+<p style="text-align:center;"><img alt="" class="has" height="190" src="https://img-blog.csdnimg.cn/20190704163812736.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0Y2F0c19jbg==,size_16,color_FFFFFF,t_70" width="519"></p>
+
+<p>&nbsp;</p>
+
+<h3><a name="t3"></a>解决方式2：jsonp 只支持get请求<span style="color:#ff2600;">不支持post请求</span></h3>
+
+<p><span style="color:#0432ff;">用法：①dataType改为jsonp &nbsp; &nbsp; ②</span><span style="color:#0432ff;">jsonp : "jsonpCallback"————发送到后端实际为</span><span style="color:#0432ff;"><a href="http://a.a.com/a/FromServlet?userName=644064" rel="nofollow" data-token="3e908a342cc418e16775468d9f3420ba"><span style="color:#0432ff;">http://a.a.com/a/FromServlet?userName=644064</span></a>&amp;</span><span style="color:#0432ff;">jsonpCallback</span><span style="color:#0432ff;">=</span><span style="color:#0432ff;">jQueryxxx</span><span style="color:#0432ff;">&nbsp; &nbsp; &nbsp;③后端获取get请求中的jsonpCallback &nbsp; &nbsp;④构造回调结构</span></p>
+
+<pre class="has" name="code"><code class="hljs javascript"><ol class="hljs-ln" style="width:825px"><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="1"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">$.ajax({</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="2"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">type</span> : <span class="hljs-string">"GET"</span>,</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="3"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">async</span> : <span class="hljs-literal">false</span>,</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="4"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">url</span> : <span class="hljs-string">"http://a.a.com/a/FromServlet?userName=644064"</span>,</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="5"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">dataType</span> : <span class="hljs-string">"jsonp"</span>,<span class="hljs-comment">//数据类型为jsonp  </span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="6"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			jsonp : <span class="hljs-string">"jsonpCallback"</span>,<span class="hljs-comment">//服务端用于接收callback调用的function名的参数</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="7"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			success : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="8"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">				alert(data[<span class="hljs-string">"userName"</span>]);</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="9"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			},</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="10"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">error</span> : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="11"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">				alert(<span class="hljs-string">'fail'</span>);</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="12"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			}</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="13"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		});</div></div></li></ol></code><div class="hljs-button {2}" data-title="复制" onclick="hljs.copyCode(event)"></div></pre>
+
+<p>&nbsp;</p>
+
+<pre class="has" name="code"><code class="hljs go"><ol class="hljs-ln" style="width:830px"><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="1"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line"><span class="hljs-comment">//后端</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="2"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">        String jsonpCallback = request.getParameter(<span class="hljs-string">"jsonpCallback"</span>);</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="3"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		<span class="hljs-comment">//构造回调函数格式jsonpCallback(数据)</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="4"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		resp.getWriter().<span class="hljs-built_in">println</span>(jsonpCallback+<span class="hljs-string">"("</span>+jsonObject.toJSONString()+<span class="hljs-string">")"</span>);</div></div></li></ol></code><div class="hljs-button {2}" data-title="复制" onclick="hljs.copyCode(event)"></div></pre>
+
+<h3><a name="t4"></a>JSONP实现原理</h3>
+
+<blockquote>
+<p style="margin-left:0cm;"><span style="color:#010101;">在同源策略下，在某个服务器下的页面是无法获取到该服务器以外的数据的，即一般的ajax是不能进行跨域请求的。但</span>&nbsp;<span style="color:#010101;">img</span><span style="color:#010101;">、iframe</span>&nbsp;<span style="color:#010101;">、script等标签是个例外，这些标签可以通过src属性请求到其他服务器上的数据。利用</span>&lt;<span style="color:#010101;">script&gt;</span><span style="color:#010101;">标签的开放策略，我们可以实现跨域请求数据，当然这需要服务器端的配合。</span>&nbsp;<span style="color:#010101;">Jquery</span><span style="color:#010101;">中ajax</span><span style="color:#010101;">的核心是通过</span>&nbsp;<span style="color:#010101;">XmlHttpRequest</span><span style="color:#010101;">获取非本页内容，而</span><span style="color:#ff2600;">jsonp的核心则是动态添加&lt;script&gt;标签来调用服务器提供的&nbsp;js脚本。</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">　　当我们正常地请求一个JSON数据的时候，服务端返回的是一串</span><span style="color:#010101;">JSON</span><span style="color:#010101;">类型的数据，而我们使用</span>&nbsp;<span style="color:#010101;">JSONP</span><span style="color:#010101;">模式来请求数据的时候服务端返回的是一段可执行的</span><span style="color:#010101;">JavaScript</span><span style="color:#010101;">代码。因为jsonp</span>&nbsp;<span style="color:#010101;">跨域的原理就是用的动态加载</span>&lt;<span style="color:#010101;">script&gt;</span><span style="color:#010101;">的src</span>&nbsp;<span style="color:#010101;">，所以我们只能把</span><span style="color:#ff2600;">参数通过url的方式传递,所以jsonp的&nbsp;type类型只能是get&nbsp;！</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">示例：</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">$.ajax({</span></p>
+
+<p style="margin-left:0cm;">&nbsp;&nbsp;&nbsp;<span style="color:#010101;"> url: 'http://192.168.10.46/demo/test.jsp', &nbsp; &nbsp; &nbsp; &nbsp;//</span><span style="color:#010101;">不同的域</span></p>
+
+<p style="margin-left:0cm;">&nbsp;&nbsp;&nbsp;<span style="color:#010101;"> type: 'GET', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// jsonp</span><span style="color:#010101;">模式只有GET</span>&nbsp;<span style="color:#010101;">是合法的</span></p>
+
+<p style="margin-left:0cm;">&nbsp;&nbsp;&nbsp;<span style="color:#010101;"> data: {</span></p>
+
+<p style="margin-left:0cm;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101;"> 'action': 'aaron'</span></p>
+
+<p style="margin-left:0cm;">&nbsp;&nbsp;&nbsp;<span style="color:#010101;"> },</span></p>
+
+<p style="margin-left:0cm;">&nbsp;&nbsp;&nbsp;<span style="color:#010101;"> dataType: 'jsonp', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;//</span>&nbsp;<span style="color:#010101;">数据类型</span></p>
+
+<p style="margin-left:0cm;">&nbsp;&nbsp;&nbsp;<span style="color:#010101;"> jsonp: 'jsonpCallback', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; //</span>&nbsp;<span style="color:#010101;">指定回调函数名，与服务器端接收的一致，并回传回来</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">})</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">其实jquery</span>&nbsp;<span style="color:#010101;">内部会转化成</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">http://192.168.10.46/demo/test.jsp?jsonpCallback=jQuery202003573935762227615_1402643146875&amp;action=aaron</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">然后动态加载</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">&lt;script type="text/javascript"src="http://192.168.10.46/demo/test.jsp?jsonpCallback= jQuery202003573935762227615_1402643146875&amp;action=aaron"&gt;&lt;/script&gt;</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">然后后端就会执行jsonpCallback(传递参数</span>&nbsp;<span style="color:#010101;">)</span><span style="color:#010101;">，把数据通过实参的形式发送出去。</span></p>
+
+<p style="margin-left:0cm;"><span style="color:#010101;">　　使用JSONP</span>&nbsp;<span style="color:#010101;">模式来请求数据的整个流程：客户端发送一个请求，规定一个可执行的函数名（这里就是</span>&nbsp;<span style="color:#010101;">jQuery</span><span style="color:#010101;">做了封装的处理，自动帮你生成回调函数并把数据取出来供success属性方法来调用,而不是传递的一个回调句柄），服务器端接受了这个</span>&nbsp;<span style="color:#010101;">jsonpCallback函数名，然后把数据通过实参的形式发送出去</span></p>
+
+<p style="margin-left:0cm;">&nbsp;</p>
+
+<p><span style="color:#010101;">（在jquery</span>&nbsp;<span style="color:#010101;">源码中，</span>&nbsp;<span style="color:#010101;">jsonp</span><span style="color:#010101;">的实现方式是动态添加&lt;script&gt;标签来调用服务器提供的</span>&nbsp;<span style="color:#010101;">js</span><span style="color:#010101;">脚本。jquery</span>&nbsp;<span style="color:#010101;">会在window对象中加载一个全局的函数，当</span>&nbsp;<span style="color:#010101;">&lt;script&gt;</span><span style="color:#010101;">代码插入时函数执行，执行完毕后就</span>&nbsp;<span style="color:#010101;">&lt;script&gt;</span><span style="color:#010101;">会被移除。同时jquery还对非跨域的请求进行了优化，如果这个请求是在同一个域名下那么他就会像正常的</span>&nbsp;<span style="color:#010101;">Ajax</span><span style="color:#010101;">请求一样工作。）</span></p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+<h3><a name="t5"></a>解决方式3：httpClient内部转发</h3>
+
+<p>实现原理很简单，若想在B站点中通过Ajax访问A站点获取结果，固然有ajax跨域问题，但在B站点中访问B站点获取结果，不存在跨域问题，这种方式实际上是在B站点中ajax请求访问B站点的HttpClient，再通过HttpClient转发请求获取A站点的数据结果。但这种方式产生了两次请求，效率低，但内部请求，抓包工具无法分析，安全。</p>
+
+<pre class="has" name="code"><code class="hljs javascript"><ol class="hljs-ln" style="width:797px"><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="1"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">$.ajax({</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="2"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">type</span> : <span class="hljs-string">"GET"</span>,</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="3"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">async</span> : <span class="hljs-literal">false</span>,</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="4"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">url</span> : <span class="hljs-string">"http://b.b.com:8080/B/FromAjaxservlet?userName=644064"</span>,</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="5"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">dataType</span> : <span class="hljs-string">"json"</span>,</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="6"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">success</span> : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="7"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">				alert(data[<span class="hljs-string">"userName"</span>]);</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="8"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			},</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="9"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-attr">error</span> : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="10"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">				alert(<span class="hljs-string">'fail'</span>);</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="11"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			}</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="12"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		});</div></div></li></ol></code><div class="hljs-button {2}" data-title="复制" onclick="hljs.copyCode(event)"></div></pre>
+
+<p>&nbsp;</p>
+
+<pre class="has" name="code"><code class="hljs java"><ol class="hljs-ln" style="width:1175px"><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="1"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line"><span class="hljs-meta">@WebServlet</span>(<span class="hljs-string">"/FromAjaxservlet"</span>)</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="2"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FromAjaxservlet</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">HttpServlet</span></span>{</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="3"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">	</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="4"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">	</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="5"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">	<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">doGet</span><span class="hljs-params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="hljs-keyword">throws</span> ServletException, IOException </span>{</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="6"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		<span class="hljs-keyword">try</span> {</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="7"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-comment">//创建默认连接</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="8"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			CloseableHttpClient httpClient = HttpClients.createDefault();</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="9"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-comment">//创建HttpGet对象,处理get请求,转发到A站点</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="10"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			HttpGet httpGet = <span class="hljs-keyword">new</span> HttpGet(<span class="hljs-string">"http://a.a.com:8080/A/FromServlet?userName="</span>+req.getParameter(<span class="hljs-string">"userName"</span>)); </div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="11"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">                        <span class="hljs-comment">//执行</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="12"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			CloseableHttpResponse response = httpClient.execute(httpGet);</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="13"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-keyword">int</span> code = response.getStatusLine().getStatusCode();</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="14"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-comment">//获取状态</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="15"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			System.out.println(<span class="hljs-string">"http请求结果为:"</span>+code);</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="16"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			<span class="hljs-keyword">if</span>(code == <span class="hljs-number">200</span>){</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="17"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">                                <span class="hljs-comment">//获取A站点返回的结果</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="18"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">				String result = EntityUtils.toString(response.getEntity());</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="19"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">				System.out.println(result);</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="20"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">                                <span class="hljs-comment">//把结果返回给B站点</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="21"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">				resp.getWriter().print(result);</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="22"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			}</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="23"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			response.close();</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="24"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			httpClient.close();</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="25"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		} <span class="hljs-keyword">catch</span> (Exception e) {</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="26"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		}</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="27"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">	}</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="28"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">}</div></div></li></ol></code><div class="hljs-button {2}" data-title="复制" onclick="hljs.copyCode(event)"></div></pre>
+
+<p>&nbsp;</p>
+
+<h3><a name="t6"></a>解决方式4：使用nginx搭建企业级接口网关方式</h3>
+
+<p>www.a.a.com不能直接请求www.b.b.com的内容，可以通过nginx，根据同域名，但项目名不同进行区分。什么意思呢？这么说可能有点抽象。假设我们公司域名叫www.nginxtest.com</p>
+
+<p>当我们需要访问www.a.a.com通过www.nginxtest.com/A访问，并通过nginx转发到www.a.a.com</p>
+
+<p>当我们需要访问www.b.b.com通过www.nginxtest.com/B访问，并通过nginx转发到www.a.a.com</p>
+
+<p>我们访问公司的域名时，是"同源"的，只是项目名不同，此时项目名的作用只是为了区分，方便转发。如果你还不理解的话，先看看我是怎么进行配置的：</p>
+
+<pre class="has" name="code"><code class="hljs java"><ol class="hljs-ln"><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="1"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">server {</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="2"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">        listen       <span class="hljs-number">80</span>;</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="3"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">        server_name  www.nginxtest.com;</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="4"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">        location /A {</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="5"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		    proxy_pass  http:<span class="hljs-comment">//a.a.com:81;</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="6"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			index  index.html index.htm;</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="7"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">        }</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="8"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		location /B {</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="9"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">		    proxy_pass  http:<span class="hljs-comment">//b.b.com:81;</span></div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="10"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">			index  index.html index.htm;</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="11"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">        }</div></div></li><li><div class="hljs-ln-numbers"><div class="hljs-ln-line hljs-ln-n" data-line-number="12"></div></div><div class="hljs-ln-code"><div class="hljs-ln-line">    }</div></div></li></ol></code><div class="hljs-button {2}" data-title="复制" onclick="hljs.copyCode(event)"></div></pre>
+
+<p>我们访问以www.nginxtest.com开头且端口为80的网址，nginx将会进行拦截匹配，若项目名为A，则分发到a.a.com:81。实际上就是通过"同源"的域名，不同的项目名进行区分，通过nginx拦截匹配，转发到对应的网址。整个过程，两次请求，第一次请求nginx服务器，第二次nginx服务器通过拦截匹配分发到对应的网址。</p>
+
+<p>&nbsp;</p>
+
+<h3><a name="t7"></a>解决方式5：使用Spring Cloud zuul接口网关</h3>
+
+<p>&nbsp;</p>
+                                    </div>
+                    </div>
